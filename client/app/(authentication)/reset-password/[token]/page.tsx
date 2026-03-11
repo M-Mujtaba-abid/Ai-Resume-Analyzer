@@ -38,11 +38,11 @@ export default function ResetPasswordPage() {
   const onSubmit = (data: ResetPasswordRequest) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
 
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+      <div className="bg-card p-8 rounded-xl shadow-md w-full max-w-md border border-border">
 
-        <h2 className="text-2xl font-semibold text-center mb-6">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-foreground">
           Reset Password
         </h2>
 
@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
               type="password"
               placeholder="New password"
               {...register("password", { required: "Password required" })}
-              className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full bg-background text-foreground border border-border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
 
             {errors.password?.message && (

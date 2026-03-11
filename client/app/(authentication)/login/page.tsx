@@ -35,11 +35,11 @@ export default function LoginPage() {
   const onSubmit = (data: LoginRequest) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
 
-  <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md border">
+  <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-md border border-border">
 
-    <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+    <h2 className="text-2xl font-bold text-center mb-6 text-foreground">
       Login to your account
     </h2>
 
@@ -47,12 +47,12 @@ export default function LoginPage() {
 
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium">Email</label>
+        <label className="block text-sm font-medium text-foreground/70">Email</label>
 
         <input
           type="email"
           {...register("email", { required: "Email is required" })}
-          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full bg-background text-foreground p-2 border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none"
         />
 
         {errors.email?.message && (
@@ -64,12 +64,12 @@ export default function LoginPage() {
 
       {/* Password */}
       <div>
-        <label className="block text-sm font-medium">Password</label>
+        <label className="block text-sm font-medium text-foreground/70">Password</label>
 
         <input
           type="password"
           {...register("password", { required: "Password is required" })}
-          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full bg-background text-foreground p-2 border border-border rounded focus:ring-2 focus:ring-blue-500 outline-none"
         />
 
         {errors.password?.message && (

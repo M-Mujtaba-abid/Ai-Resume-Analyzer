@@ -35,10 +35,10 @@ export default function RegisterForm() {
   const onSubmit = (data: RegisterRequest) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-  <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border">
+    <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
+  <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-sm border border-border">
 
-    <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+    <h2 className="text-2xl font-semibold text-center text-foreground mb-6">
       Create your account
     </h2>
 
@@ -46,13 +46,13 @@ export default function RegisterForm() {
 
       {/* Name */}
       <div>
-        <label className="block text-sm text-gray-600 mb-1">
+        <label className="block text-sm text-foreground/70 mb-1">
           Full Name
         </label>
 
         <input
           {...register("name", { required: "Name is required" })}
-          className="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full bg-background border border-border text-foreground rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
           placeholder="John Doe"
         />
 
@@ -65,14 +65,14 @@ export default function RegisterForm() {
 
       {/* Email */}
       <div>
-        <label className="block text-sm text-gray-600 mb-1">
+        <label className="block text-sm text-foreground/70 mb-1">
           Email
         </label>
 
         <input
           type="email"
           {...register("email", { required: "Email is required" })}
-          className="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full bg-background border border-border text-foreground rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
           placeholder="you@gmail.com"
         />
 
@@ -85,14 +85,14 @@ export default function RegisterForm() {
 
       {/* Password */}
       <div>
-        <label className="block text-sm text-gray-600 mb-1">
+        <label className="block text-sm text-foreground/70 mb-1">
           Password
         </label>
 
         <input
           type="password"
           {...register("password", { required: "Password is required" })}
-          className="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
+          className="w-full bg-background border border-border text-foreground rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
           placeholder="••••••••"
         />
 
@@ -119,15 +119,15 @@ export default function RegisterForm() {
 
     {/* Divider */}
     <div className="flex items-center my-6">
-      <div className="flex-grow border-t"></div>
-      <span className="mx-3 text-gray-400 text-sm">OR</span>
-      <div className="flex-grow border-t"></div>
+      <div className="flex-grow border-t border-border"></div>
+      <span className="mx-3 text-foreground/50 text-sm">OR</span>
+      <div className="flex-grow border-t border-border"></div>
     </div>
 
     {/* Google Login */}
     <button
       onClick={loginWithGoogle}
-      className="w-full flex items-center justify-center gap-3 border rounded-lg py-2.5 hover:bg-gray-50 transition"
+      className="w-full flex items-center justify-center gap-3 border border-border bg-card text-foreground rounded-lg py-2.5 hover:bg-background transition"
     >
       <img
         src="https://www.svgrepo.com/show/475656/google-color.svg"
