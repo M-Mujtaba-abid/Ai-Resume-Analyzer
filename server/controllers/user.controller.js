@@ -117,8 +117,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "None",
+    secure: false,
+    sameSite: "lax",
+    path: "/",
   };
 
   const loggedInUser = await User.findById(user._id).select(
@@ -145,7 +148,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     { new: true },
   );
 
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: true, secure: true,sameSite: "none", };
 
   return res
     .status(200)
@@ -270,54 +273,54 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }
 });
 
-
 const changeCurrentPassword = asyncHandler(async (req, res) => {
-    const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword } = req.body;
 
-    if (!oldPassword || !newPassword) {
-        throw new ApiError(400, "Both old and new passwords are required");
-    }
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "Both old and new passwords are required");
+  }
 
-    // 1. User ko dhoondo (req.user verifyJWT middleware se aayega)
-    const user = await User.findById(req.user?._id).select("+password");
+  // 1. User ko dhoondo (req.user verifyJWT middleware se aayega)
+  const user = await User.findById(req.user?._id).select("+password");
 
-    // 2. Purana password check karo (Model method use karke)
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+  // 2. Purana password check karo (Model method use karke)
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
-    if (!isPasswordCorrect) {
-        throw new ApiError(400, "Purana password galat hai");
-    }
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Purana password galat hai");
+  }
 
-    // 3. Naya password assign karo
-    user.password = newPassword;
+  // 3. Naya password assign karo
+  user.password = newPassword;
 
-    // 4. Save karo (Pre-save hook khud hash kar dega)
-    await user.save({ validateBeforeSave: false });
+  // 4. Save karo (Pre-save hook khud hash kar dega)
+  await user.save({ validateBeforeSave: false });
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, {}, "Password successfully change ho gaya hai"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password successfully change ho gaya hai"));
 });
 
-
 const googleAuthCallback = asyncHandler(async (req, res) => {
-    // 1. Tokens generate karein (req.user passport se aata hai)
-    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(req.user._id);
+  // 1. Tokens generate karein (req.user passport se aata hai)
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    req.user._id,
+  );
 
-    // 2. Cookie options set karein
-    const options = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
-    };
+  // 2. Cookie options set karein
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+  };
 
-    // 3. Cookies set karke redirect karein
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-    
-    return res
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .redirect(`${frontendUrl}/`);
+  // 3. Cookies set karke redirect karein
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
+  return res
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .redirect(`${frontendUrl}/`);
 });
 export {
   registerUser,

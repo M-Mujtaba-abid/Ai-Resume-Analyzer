@@ -2,44 +2,35 @@
 
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { logoutUser } from '@/services/authService';
-import { AxiosError } from 'axios';
-import { ApiError } from '@/types/apiTypes';
+import { logout } from '@/services/authService';
 import toast from 'react-hot-toast';
 
 export default function LogoutButton() {
   const router = useRouter();
 
-  const { mutate, isLoading } = useMutation<void, AxiosError<ApiError>>({
-    mutationFn: logoutUser,
+  const { mutate, isPending } = useMutation({
+    mutationFn: logout,
     onSuccess: () => {
       toast.success("Logged out successfully!");
-      router.push('/login'); // redirect to login
+
+      // full refresh taake middleware dobara run ho
+      window.location.href = "/login";
     },
-    onError: (err) => {
-      toast.error(err.response?.data?.message || "Logout failed");
-    }
+    onError: () => {
+      toast.error("Logout failed");
+    },
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md border text-center">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          Are you sure you want to logout?
-        </h2>
-
-        <button
-          onClick={() => mutate()}
-          disabled={isLoading}
-          className={`w-full py-2 rounded text-white font-semibold transition ${
-            isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-red-600 hover:bg-red-700"
-          }`}
-        >
-          {isLoading ? "Logging out..." : "Logout"}
-        </button>
-      </div>
-    </div>
+    <button
+       onClick={() => {
+    console.log("Logout clicked");
+    mutate();
+  }}
+      disabled={isPending}
+      className="bg-card text-foreground px-5 py-2.5 rounded-xl font-bold border border-border hover:bg-border transition-colors"
+    >
+      {isPending ? "Logging out..." : "Logout"}
+    </button>
   );
 }

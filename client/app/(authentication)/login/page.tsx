@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     onSuccess: () => {
       toast.success("Login successful!");
-      router.push('/'); 
+      window.location.href = "/";
     },
 
     onError: (err) => {
@@ -33,6 +33,11 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data: LoginRequest) => mutate(data);
+
+  const forgetgetHandler =()=>{
+    router.push("/Forgot-Password")
+    alert("clicked on forget ")
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
@@ -82,7 +87,7 @@ export default function LoginPage() {
         <div className="flex justify-end mt-1">
           <button
             type="button"
-            onClick={() => router.push("/Forgot-Password")}
+            onClick={forgetgetHandler }
             className="text-sm text-blue-600 hover:underline"
           >
             Forgot password?

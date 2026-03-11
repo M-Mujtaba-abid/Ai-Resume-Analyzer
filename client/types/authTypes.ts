@@ -8,9 +8,9 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
-export interface logoutUser {
-  // email: string;
-  // password: string;
+export interface changecurrentpassword {
+  newPassword: string;
+  oldPassword: string;
 }
 export interface ForgotPasswordRequest {
   email: string;

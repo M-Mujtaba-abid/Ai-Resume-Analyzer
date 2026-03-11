@@ -4,7 +4,7 @@ const LandingPage = () => {
     // throw new Error("Testing my cool error page!");
   return (
     /* bg-background aur text-foreground aapke CSS variables se link hain */
-    <div className="w-full h-full bg-background text-foreground  pb-16 px-6 transition-colors duration-300">
+    <div className="w-full h-full bg-background text-foreground  pt-5 pb-16 px-6 transition-colors duration-300">
       
       {/* --- HERO SECTION --- */}
       <section className="max-w-7xl mx-auto text-center">

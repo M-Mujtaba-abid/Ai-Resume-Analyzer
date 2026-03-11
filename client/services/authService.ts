@@ -6,7 +6,8 @@ import {
   AuthResponse,
   ResetPasswordRequest,
   ForgotPasswordRequest,
-  logoutUser
+  // logoutUser,
+  changecurrentpassword
 } from "@/types/authTypes";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -16,18 +17,50 @@ const api = axios.create({
   withCredentials: true,
 });
 
+
+// --- INTERCEPTOR START ---
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Check karein ke ye request logout to nahi hai?
+    const isLogoutRequest = originalRequest.url?.includes("/logout");
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isLogoutRequest) {
+      originalRequest._retry = true;
+      try {
+        await axios.post(`${API_URL}/user/refreshAccessToken`, {}, { withCredentials: true });
+        return api(originalRequest);
+      } catch (refreshError) {
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // Agar logout request 401 de rahi hai, to usay refresh karne ki bajaye 
+    // seedha resolve kar dein ya login par bhej dein
+    if (error.response?.status === 401 && isLogoutRequest) {
+       window.location.href = "/login";
+       return Promise.resolve(); 
+    }
+
+    return Promise.reject(error);
+  }
+);
+// --- INTERCEPTOR END ---
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
-  const response = await api.post("/user/login", data);
+  const response = await api.post("/user/login", data, { withCredentials: true });
   return response.data;
 };
-export const logout = async (data: logoutUser): Promise<AuthResponse> => {
-  const response = await api.post("/user/logout", data);
+export const logout = async (): Promise<AuthResponse> => {
+  const response = await api.post("/user/logout", {}, { withCredentials: true });
   return response.data;
 };
 export const forgotPassword = async (
   data: ForgotPasswordRequest
 ): Promise<AuthResponse> => {
-  const response = await api.post("/user/forgotPassword", data);
+  const response = await api.post("/user/forgotPassword", data ,{ withCredentials: true });
   return response.data;
 };
 
@@ -35,20 +68,25 @@ export const resetPassword = async (
   token: string,
   data: ResetPasswordRequest
 ): Promise<AuthResponse> => {
-  const response = await api.post(`/user/resetPassword/${token}`, data);
+  const response = await api.post(`/user/resetPassword/${token}`, data,{ withCredentials: true });
   return response.data;
 };
 
 export const register = async (data: RegisterRequest): Promise<AuthResponse> => {
-  const response = await api.post("/user/register", data);
+  const response = await api.post("/user/register", data,{ withCredentials: true });
+  return response.data;
+};
+export const changeCurrentPassword = async (data: changecurrentpassword): Promise<AuthResponse> => {
+  const response = await api.post("/user/changeCurrentPassword", data,{ withCredentials: true });
   return response.data;
 };
 
 export const verifyOtp = async (data: VerifyOtpRequest): Promise<AuthResponse> => {
-  const response = await api.post("/user/verifyEmail", data);
+  const response = await api.post("/user/verifyEmail", data,{ withCredentials: true });
   return response.data;
 };
 
 export const loginWithGoogle = () => {
   window.location.href = `${API_URL}/user/google`;
 };
+
