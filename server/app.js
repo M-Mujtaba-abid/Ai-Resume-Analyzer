@@ -12,7 +12,7 @@ import cors from "cors";
 
 
 app.use(cors({
-  origin: "http://localhost:3000", // Frontend URL
+  origin: "http://localhost:3000" || "https://ai-resume-analyzer-j4if.vercel.app/", // Frontend URL
   credentials: true
 }));
 app.use(express.json());
