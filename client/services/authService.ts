@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 import {
   RegisterRequest,
   LoginRequest,
@@ -9,46 +9,17 @@ import {
   // logoutUser,
   changecurrentpassword
 } from "@/types/authTypes";
+import { api, API_URL } from "./api";
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const api = axios.create({
-  baseURL: API_URL,
-  withCredentials: true,
-});
+// const api = axios.create({
+//   baseURL: API_URL,
+//   withCredentials: true,
+// });
 
 
-// --- INTERCEPTOR START ---
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
 
-    // Check karein ke ye request logout to nahi hai?
-    const isLogoutRequest = originalRequest.url?.includes("/logout");
-
-    if (error.response?.status === 401 && !originalRequest._retry && !isLogoutRequest) {
-      originalRequest._retry = true;
-      try {
-        await axios.post(`${API_URL}/user/refreshAccessToken`, {}, { withCredentials: true });
-        return api(originalRequest);
-      } catch (refreshError) {
-        window.location.href = "/login";
-        return Promise.reject(refreshError);
-      }
-    }
-
-    // Agar logout request 401 de rahi hai, to usay refresh karne ki bajaye 
-    // seedha resolve kar dein ya login par bhej dein
-    if (error.response?.status === 401 && isLogoutRequest) {
-       window.location.href = "/login";
-       return Promise.resolve(); 
-    }
-
-    return Promise.reject(error);
-  }
-);
-// --- INTERCEPTOR END ---
 export const login = async (data: LoginRequest): Promise<AuthResponse> => {
   const response = await api.post("/user/login", data, { withCredentials: true });
   return response.data;

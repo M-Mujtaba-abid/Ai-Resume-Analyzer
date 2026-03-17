@@ -3,11 +3,13 @@ dotenv.config();
 import app from './app.js'; // .js likhna mat bhoolna
 import connectDB from './config/db.js';
 import configurePassport from './config/passport.js';
+import initCronJobs from './jobs/resetLimits.js';
 
 
 const PORT = process.env.PORT ;
 
 connectDB()
+initCronJobs();
 
 configurePassport(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
 app.listen(PORT, () => {

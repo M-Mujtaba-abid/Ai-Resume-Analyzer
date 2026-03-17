@@ -39,13 +39,26 @@ const resumeSchema = new Schema(
 
   analysis: {
     atsScore: { type: Number, default: 0 },
+    summary: String, // Array ki bajaye String behtar hai 3-5 lines ke liye
     suggestions: [String],
     keywordsMissing: [String],
-
+    interviewQuestions: {
+      technical: [String],
+      behavioral: [String]
+    },
     parsedData: {
       skills: [String],
       experience: String,
+      name:String,
+      email:String,
+      phoneNumber: String,
+    
       education: String,
+      university: String,
+      interest: String,
+      home_town: String,
+      fyp: String,          
+      certifications: [String]
     },
   },
 

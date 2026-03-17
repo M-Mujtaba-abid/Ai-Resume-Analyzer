@@ -4,6 +4,7 @@ import ApiError from "../utils/apiErorr.js";
 import User from "../models/user.model.js";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
+import jwt from "jsonwebtoken";
 
 // Helper function (Internal use only)
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -22,18 +23,60 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
+// const registerUser = asyncHandler(async (req, res) => {
+
+//   const { name, email, password } = req.body;
+
+//   // Check if user exists
+//   const existedUser = await User.findOne({ email });
+//   if (existedUser) throw new ApiError(409, "User already exists");
+
+//   // 1. Generate 6-digit OTP
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 mins valid
+
+//   // 2. Create User (unverified)
+//   const user = await User.create({
+//     name,
+//     email,
+//     password,
+//     emailVerificationOTP: otp,
+//     emailVerificationExpiry: otpExpiry,
+//   });
+
+//   // 3. Send Email
+//   try {
+//     await sendEmail({
+//       email: user.email,
+//       subject: "Email Verification Code",
+//       message: `Aapka verification code ye hai: ${otp}. Ye 10 minute mein expire ho jayega.`,
+//     });
+//   } catch (error) {
+//     console.error("Email Error:", error);
+//     // User delete karne ki zaroorat nahi, baad mein resend OTP ka option de sakte hain
+//   }
+
+//   return res
+//     .status(201)
+//     .json(
+//       new ApiResponse(
+//         201,
+//         { email: user.email },
+//         "Registration successful. Please check your email for OTP.",
+//       ),
+//     );
+// });
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Check if user exists
   const existedUser = await User.findOne({ email });
   if (existedUser) throw new ApiError(409, "User already exists");
 
-  // 1. Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 mins valid
+  const otpExpiry = Date.now() + 10 * 60 * 1000;
 
-  // 2. Create User (unverified)
+  // Sirf create karein, email Model ka post-save hook khud bhej dega
   const user = await User.create({
     name,
     email,
@@ -42,28 +85,17 @@ const registerUser = asyncHandler(async (req, res) => {
     emailVerificationExpiry: otpExpiry,
   });
 
-  // 3. Send Email
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: "Email Verification Code",
-      message: `Aapka verification code ye hai: ${otp}. Ye 10 minute mein expire ho jayega.`,
-    });
-  } catch (error) {
-    console.error("Email Error:", error);
-    // User delete karne ki zaroorat nahi, baad mein resend OTP ka option de sakte hain
-  }
-
   return res
     .status(201)
     .json(
       new ApiResponse(
         201,
         { email: user.email },
-        "Registration successful. Please check your email for OTP.",
+        "Registration successful. OTP has been sent to your email.",
       ),
     );
 });
+
 const verifyEmail = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
 
@@ -114,6 +146,8 @@ const loginUser = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id,
   );
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false }); // DB mein save karna lazmi hai
 
   const options = {
     httpOnly: true,
@@ -142,29 +176,37 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    { $unset: { refreshToken: 1 } },
-    { new: true },
-  );
+  if (req.user?._id) {
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true },
+    );
+  }
 
-  const options = { httpOnly: true, secure: true,sameSite: "none", };
+  // Same options jo login ke waqt use kiye thay wahi yahan use karein
+  const options = {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  };
 
   return res
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "Logged out"));
+    .json({ success: true, message: "Logged out" }); // Direct JSON for testing
 });
-
 const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incomingToken = req.cookies?.refreshToken || req.body.refreshToken;
+  const incomingToken = req.cookies?.refreshToken;
+  // console.log("incomingToken from user controller 193line",incomingToken )
   if (!incomingToken) throw new ApiError(401, "Unauthorized request");
 
   try {
     const decoded = jwt.verify(incomingToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded?._id);
-
+    // console.log("decoded", decoded)
+    const user = await User.findById(decoded?._id).select("+refreshToken");
+    // console.log("user refresh token" , user )
     if (!user || incomingToken !== user.refreshToken) {
       throw new ApiError(401, "Refresh token is expired or used");
     }
@@ -172,12 +214,15 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
 
+    user.refreshToken = newRefreshToken;
+    await user.save({ validateBeforeSave: false });
     return res
       .status(200)
-      .cookie("accessToken", accessToken, { httpOnly: true, secure: true })
-      .cookie("refreshToken", newRefreshToken, { httpOnly: true, secure: true })
+      .cookie("accessToken", accessToken, { httpOnly: true })
+      .cookie("refreshToken", newRefreshToken, { httpOnly: true })
       .json(new ApiResponse(200, { accessToken }, "Token refreshed"));
   } catch (error) {
+    console.log("Actual Error:", error.message);
     throw new ApiError(401, "Invalid refresh token");
   }
 });
@@ -311,7 +356,8 @@ const googleAuthCallback = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    path: "/",
   };
 
   // 3. Cookies set karke redirect karein
