@@ -13,22 +13,20 @@ import { stripeWebhook } from './webhooks/stripe.webhook.js';
 // import { checkAnalysisLimit } from './middleware/checkAnalysisLimit.js';
 
 
+
 const allowedOrigins = [
   "http://localhost:3000",
-   process.env.FRONTEND_URL // Removed the trailing slash
+  process.env.FRONTEND_URL || "https://ai-resume-analyzer-6p1x.vercel.app"
 ];
 
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+  origin: function(origin, callback) {
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } 
+    console.log("Blocked by CORS:", origin);
+    return callback(null, false); // Do not throw error
   },
   credentials: true
 }));
