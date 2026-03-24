@@ -19,22 +19,22 @@ const LandingPage = () => {
           </span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
+        <h1 className="text-3xl md:text-6xl font-black tracking-tight mb-6">
           Maximize Your <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-500">
             Interview Conversion
           </span>
         </h1>
 
-        <p className="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-sm md:text-xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
           Stop guessing why your applications are ignored. Our proprietary AI engine audits your resume against hundreds of recruiter patterns to ensure 100% ATS visibility.
         </p>
 
         {/* --- MAIN ACTION / DROPZONE MOCKUP --- */}
-        <div className="mt-16 max-w-4xl mx-auto">
-          <div className="relative group p-1 rounded-[2.5rem] bg-gradient-to-b from-blue-500 to-indigo-600 shadow-2xl shadow-blue-500/20">
+        <div className="mt-16 max-w-4xl h-full mx-auto">
+          <div className="relative group p-1 rounded-[2.5rem] bg-linear-to-b from-blue-500 to-indigo-600 shadow-2xl shadow-blue-500/20">
             {/* Yahan bg-background dark mode mein automatically dark ho jaye ga */}
-            <div className="bg-background rounded-[2.3rem] p-12 flex flex-col items-center border-4 border-dashed border-border hover:border-blue-400 transition-all cursor-pointer">
+            <div className="bg-background rounded-[2.3rem] p-6 flex flex-col items-center border-4 border-dashed border-border hover:border-blue-400 transition-all cursor-pointer">
               
               <h3 className="text-2xl font-bold mb-2">Drop your resume here</h3>
               <p className="text-slate-500 pb-3 dark:text-slate-400">For Analyze</p>
