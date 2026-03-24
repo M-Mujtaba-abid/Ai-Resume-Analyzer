@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 // import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { stripe } from "../services/stripe.service.js";
 import ApiError from "../utils/apiErorr.js";
 import paymentSchema from "../models/payment.model.js";

@@ -5,12 +5,12 @@ import Resume from "../models/resume.model.js";
 import pdf from "pdf-parse-fork"; // <--- Yeh import add karein
 
 import { asyncHandler } from "../utils/asyncHandler.js";
-// import { ApiResponse } from "../utils/apiResponse.js";
+
 import ApiError from "../utils/apiErorr.js";
 // import { atsAnalyzer } from "../services/atsAnalyzer.service.js";
 import { analyzeResumeWithAI } from "../services/aiAnalyzer.service.js";
 import User from "../models/user.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 
 export const uploadResume = asyncHandler(async (req, res) => {
   const file = req.file;
