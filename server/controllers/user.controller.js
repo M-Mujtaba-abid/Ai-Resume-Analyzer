@@ -24,6 +24,7 @@
   };
 
   const registerUser = asyncHandler(async (req, res) => {
+        console.log("REQ BODY:", req.body); // 👈 debug
     const { name, email, password } = req.body;
 
     const existedUser = await User.findOne({ email });
@@ -41,6 +42,7 @@
       emailVerificationExpiry: otpExpiry,
     });
 
+     console.error("REGISTER ERROR:", error);
     return res
       .status(201)
       .json(
