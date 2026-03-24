@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUser, loginUser, logoutUser, refreshAccessToken, forgotPassword, resetPassword, verifyEmail, changeCurrentPassword, generateAccessAndRefreshTokens, googleAuthCallback } from "../controllers/user.controller.js";
+import { registerUser, loginUser, logoutUser, refreshAccessToken, forgotPassword, resetPassword, verifyEmail, changeCurrentPassword, googleAuthCallback, getCurrentUser } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import passport from "passport";
 
@@ -21,5 +21,7 @@ router.get("/google/back",
     passport.authenticate("google", { session: false, failureRedirect: "/login" }),
     googleAuthCallback // Clean controller call
 );;
+
+router.get("/getCurrentUser", verifyJWT, getCurrentUser);
 
 export default router;
