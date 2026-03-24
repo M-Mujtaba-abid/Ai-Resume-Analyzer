@@ -1,54 +1,63 @@
 import express from 'express';
+import cors from "cors";
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import "./config/passport.js";
+
+// Routes & Middlewares
 import userRouter from './routes/user.route.js'
 import resumeRouter from './routes/resume.route.js'
 import stripeRouter from './routes/stripe.route.js'
 import { errorHandler } from './middleware/error.middleware.js';
-import cookieParser from 'cookie-parser';
-import "./config/passport.js";
-import passport from 'passport';
-// import configurePassport from './config/passport.js';
-const app = express();
-import cors from "cors";
 import { stripeWebhook } from './webhooks/stripe.webhook.js';
-// import { checkAnalysisLimit } from './middleware/checkAnalysisLimit.js';
 
+const app = express();
 
-
-
+// 1. Origins ko clean list mein rakhein
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.FRONTEND_URL || "https://ai-resume-analyzer-6p1x.vercel.app"
+  "https://ai-resume-analyzer-6p1x.vercel.app",
+  "https://ai-resume-analyzer-orpin-gamma.vercel.app" // Error wala URL add kiya
 ];
 
+// 2. CORS Middleware - Isse SABSE UPAR rakhein
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // Allow curl, Postman, mobile apps
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("CORS Blocked for:", origin);
+      callback(new Error('Not allowed by CORS'));
     }
-    console.log("Blocked by CORS:", origin);
-    return callback(null, false); // Reject other origins safely
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
 }));
 
-// Handle preflight requests automatically
+// 3. Pre-flight requests handler
 app.options("*", cors());
+
+// 4. Stripe Webhook (Raw body ke liye express.json se pehle)
 app.post("/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
+
+// 5. Normal Parsers
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
+
+// 6. Routes
 app.use("/user", userRouter);
 app.use("/resume", resumeRouter);
 app.use("/stripe", stripeRouter);
 
-// configurePassport()
 app.get('/', (req, res) => {
-    res.send('ES6 Import/Export working! 🚀');
+    res.send('API is live! 🚀');
 });
 
 app.use(errorHandler);
-// Default export
+
 export default app;
