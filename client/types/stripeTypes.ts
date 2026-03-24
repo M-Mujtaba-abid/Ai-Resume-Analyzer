@@ -30,6 +30,11 @@ export interface PaymentRecord {
   receiptUrl?: string;
 }
 
+export interface CustomerPortalResponse {
+  success: boolean;
+  data: { url: string };
+  message: string;
+}
 // types/stripeTypes.ts mein add karein
 export interface UserProfileResponse {
   statusCode: number;

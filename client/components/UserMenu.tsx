@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { User, CreditCard, Moon, Sun, LogOut, ChevronDown, LogIn, UserPlus } from "lucide-react";
+import { User, CreditCard, Moon, Sun, LogOut, ChevronDown, LogIn, UserPlus, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import LogoutButton from "./LogoutButton";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUserProfile } from "@/services/userService";
 
 interface UserMenuProps {
   isLoggedIn?: boolean;
@@ -13,6 +15,15 @@ const UserMenu = ({ isLoggedIn = false }: UserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
+
+  // --- Dynamic Data Fetching ---
+  const { data, isLoading } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUserProfile,
+    enabled: isLoggedIn, // Sirf tab fetch kare jab user logged in ho
+  });
+
+  const user = data?.data;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -30,8 +41,17 @@ const UserMenu = ({ isLoggedIn = false }: UserMenuProps) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-secondary transition-all border border-border bg-background"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-inner">
-          {isLoggedIn ? "MA" : <User size={16} />}
+        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 overflow-hidden flex items-center justify-center text-white text-xs font-bold shadow-inner">
+          {isLoggedIn ? (
+            user?.avatar ? (
+              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+            ) : (
+              // Name initials (e.g., Mujtaba Abid -> MA)
+              user?.name?.split(" ").map((n: string) => n[0]).join("").toUpperCase() || "U"
+            )
+          ) : (
+            <User size={16} />
+          )}
         </div>
         <ChevronDown size={14} className={`text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -40,14 +60,24 @@ const UserMenu = ({ isLoggedIn = false }: UserMenuProps) => {
         <div className="absolute right-0 mt-3 w-64 bg-card border border-border rounded-2xl shadow-2xl py-2 z-[150] animate-in fade-in zoom-in duration-200">
           {isLoggedIn ? (
             <>
+              {/* --- Dynamic Header --- */}
               <div className="px-4 py-3 border-b border-border mb-2">
-                <p className="text-sm font-bold truncate">Mujtaba Abid</p>
-                <p className="text-xs text-muted-foreground truncate italic">mujtaba.dev@example.com</p>
+                {isLoading ? (
+                  <div className="flex items-center gap-2 animate-pulse">
+                    <div className="h-4 w-24 bg-secondary rounded" />
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm font-bold truncate text-foreground capitalize">{user?.name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate font-medium">{user?.email}</p>
+                  </>
+                )}
               </div>
 
               <div className="px-2 space-y-1">
                 <MenuLink href="/profile" icon={<User size={16} />} label="My Profile" onClick={() => setIsOpen(false)} />
                 <MenuLink href="/subscription" icon={<CreditCard size={16} />} label="Subscription" onClick={() => setIsOpen(false)} />
+                <MenuLink href="/analysisHistory" icon={<CreditCard size={16} />} label="analysisHistory" onClick={() => setIsOpen(false)} />
               </div>
 
               <div className="border-t border-border mt-2 pt-2 px-2">

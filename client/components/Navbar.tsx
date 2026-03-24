@@ -5,11 +5,22 @@ import { Menu, X, User, CreditCard, Moon, Sun, LogOut, LogIn, UserPlus, ChevronR
 import { useTheme } from "next-themes";
 import LogoutButton from "./LogoutButton";
 import UserMenu from "./UserMenu";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUserProfile } from "@/services/userService";
 
 const Navbar = ({ isLoggedIn = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  // --- Dynamic Data Fetching for Mobile ---
+  const { data, isLoading } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUserProfile,
+    enabled: isLoggedIn, // Sirf tab fetch kare jab logged in ho
+  });
+
+  const user = data?.data;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -106,14 +117,27 @@ const Navbar = ({ isLoggedIn = false }) => {
               
               {isLoggedIn ? (
                 <div className="space-y-3">
-                  {/* Profile Card */}
-                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/5 border border-blue-600/10 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20">
-                      MA
+                  {/* DYNAMIC PROFILE CARD */}
+                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/5 border border-blue-600/10 mb-6 transition-all">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20 overflow-hidden shrink-0">
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        user?.name?.split(" ").map((n: string) => n[0]).join("").toUpperCase() || "U"
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-foreground truncate">Mujtaba Abid</p>
-                      <p className="text-xs text-muted-foreground truncate">mujtaba.dev@example.com</p>
+                      {isLoading ? (
+                        <div className="space-y-2 animate-pulse">
+                          <div className="h-4 w-24 bg-secondary rounded" />
+                          <div className="h-3 w-32 bg-secondary rounded" />
+                        </div>
+                      ) : (
+                        <>
+                          <p className="font-bold text-foreground truncate text-lg capitalize">{user?.name}</p>
+                          <p className="text-xs text-muted-foreground truncate font-medium">{user?.email}</p>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -134,7 +158,7 @@ const Navbar = ({ isLoggedIn = false }) => {
                       </div>
                     </button>
 
-                    <div className="flex items-center gap-4 w-full p-4 rounded-2xl bg-red-500/10 text-red-500 font-bold mt-4">
+                    <div className="flex items-center gap-4 w-full p-4 rounded-2xl bg-red-500/10 text-red-500 font-bold mt-4 active:scale-95 transition-transform">
                        <LogOut size={20} />
                        <LogoutButton />
                     </div>
@@ -168,7 +192,7 @@ const Navbar = ({ isLoggedIn = false }) => {
               )}
             </div>
 
-            <div className="text-center mt-10">
+            <div className="text-center mt-10 pb-6">
                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest opacity-50">
                 ResuScan.AI • Version 1.0.4
               </p>
@@ -179,7 +203,6 @@ const Navbar = ({ isLoggedIn = false }) => {
     </>
   );
 };
-
 const MobileMenuLink = ({ href, icon, label, onClick }: { href: string; icon: React.ReactNode; label: string; onClick: () => void }) => (
   <Link
     href={href}

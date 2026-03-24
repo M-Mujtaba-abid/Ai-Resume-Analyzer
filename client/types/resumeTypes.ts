@@ -61,3 +61,10 @@ export interface AnalyzeResumeResponse {
   data: Resume;
   message: string;
 }
+
+export interface AllAnalysesResponse {
+  statusCode: number;
+  data: Resume[]; // Array of Resume
+  message: string;
+  success: boolean;
+}
