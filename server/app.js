@@ -13,21 +13,18 @@ import { stripeWebhook } from './webhooks/stripe.webhook.js';
 
 const app = express();
 
-// 1. Origins ko clean list mein rakhein
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://ai-resume-analyzer-frontend-0078.vercel.app"|| process.env.FRONTEND_URL,
-  // "https://ai-resume-analyzer-orpin-gamma.vercel.app" // Error wala URL add kiya
-];
+  "https://ai-resume-analyzer-frontend-0078.vercel.app",
+  process.env.FRONTEND_URL
+].filter(Boolean); // Taake undefined values nikal jayein
 
-console.log("url from app cors",allowedOrigins[1])
-// 2. CORS Middleware - Isse SABSE UPAR rakhein
+// 1. CORS Middleware - Sabse upar
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.log("CORS Blocked for:", origin);
@@ -39,24 +36,32 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
 }));
 
-// 3. Pre-flight requests handler
-app.options("(.*)", cors());
+/** * FIX: 'app.options' wali crash karne wali line ko hata kar 
+ * simple 'app.use' middleware use karein Pre-flight ke liye.
+ */
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
-// 4. Stripe Webhook (Raw body ke liye express.json se pehle)
+// 2. Stripe Webhook (Keep before express.json)
 app.post("/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 
-// 5. Normal Parsers
+// 3. Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
-// 6. Routes
+// 4. Routes
 app.use("/user", userRouter);
 app.use("/resume", resumeRouter);
 app.use("/stripe", stripeRouter);
 
 app.get('/', (req, res) => {
-    res.send('API is live! 🚀');
+    res.send('API is live and kicking! 🚀');
 });
 
 app.use(errorHandler);
