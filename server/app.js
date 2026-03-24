@@ -16,10 +16,11 @@ const app = express();
 // 1. Origins ko clean list mein rakhein
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://ai-resume-analyzer-6p1x.vercel.app",
-  "https://ai-resume-analyzer-orpin-gamma.vercel.app" // Error wala URL add kiya
+  "https://ai-resume-analyzer-frontend-0078.vercel.app"|| process.env.FRONTEND_URL,
+  // "https://ai-resume-analyzer-orpin-gamma.vercel.app" // Error wala URL add kiya
 ];
 
+console.log("url from app cors",allowedOrigins[1])
 // 2. CORS Middleware - Isse SABSE UPAR rakhein
 app.use(cors({
   origin: function(origin, callback) {
@@ -39,7 +40,7 @@ app.use(cors({
 }));
 
 // 3. Pre-flight requests handler
-app.options("*", cors());
+app.options("(.*)", cors());
 
 // 4. Stripe Webhook (Raw body ke liye express.json se pehle)
 app.post("/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
