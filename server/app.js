@@ -14,6 +14,7 @@ import { stripeWebhook } from './webhooks/stripe.webhook.js';
 
 
 
+
 const allowedOrigins = [
   "http://localhost:3000",
   process.env.FRONTEND_URL || "https://ai-resume-analyzer-6p1x.vercel.app"
@@ -21,15 +22,22 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
+
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
-    } 
+    }
+
+    // Block any other origins
     console.log("Blocked by CORS:", origin);
-    return callback(null, false); // Do not throw error
+    return callback(new Error("Not allowed by CORS")); // optional: stops request
   },
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 app.post("/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(express.json());
 app.use(cookieParser());
