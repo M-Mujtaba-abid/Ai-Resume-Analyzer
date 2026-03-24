@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       required: function () {
         return !this.googleId;
       },
-      select: false,
+      select: false
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date,
@@ -44,6 +44,12 @@ const userSchema = new mongoose.Schema(
       enum: ["free", "silver", "gold"],
       default: "free",
     },
+    planExpiry: {
+      type: Date,
+      default: null, // Free users ke liye null
+    },
+    stripeCustomerId: String,
+    subscriptionId: String,
     analysisCount: {
       type: Number,
       default: 0,
@@ -156,7 +162,7 @@ userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     { _id: this._id, email: this.email },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "1m" },
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "10m" },
   );
 };
 

@@ -54,7 +54,7 @@ Job Description: ${jobDescription}
             messages: [{ role: "user", content: prompt }],
             temperature: 0.1, // Precision ke liye temperature kam rakha hai
             response_format: { type: "json_object" } // Groq supports this for Llama 3
-        });
+        });                          
 
         let result = completion.choices[0].message.content;
 
@@ -70,4 +70,4 @@ Job Description: ${jobDescription}
         console.error("AI Analysis Error:", error.message);
         throw new Error("AI Analysis failed: " + error.message);
     }
-};
+}; 

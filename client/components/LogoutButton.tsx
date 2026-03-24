@@ -1,12 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from '@/services/authService';
 import toast from 'react-hot-toast';
 
 export default function LogoutButton() {
-  const router = useRouter();
+  // const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: logout,
