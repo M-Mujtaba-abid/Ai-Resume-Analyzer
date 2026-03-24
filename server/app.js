@@ -22,22 +22,20 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-
+    if (!origin) return callback(null, true); // Allow curl, Postman, mobile apps
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-
-    // Block any other origins
     console.log("Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS")); // optional: stops request
+    return callback(null, false); // Reject other origins safely
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// Handle preflight requests automatically
+app.options("*", cors());
 app.post("/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(express.json());
 app.use(cookieParser());
