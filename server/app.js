@@ -15,7 +15,7 @@ import { stripeWebhook } from './webhooks/stripe.webhook.js';
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://ai-resume-analyzer-j4if.vercel.app" // Removed the trailing slash
+  "https://ai-resume-analyzer-6p1x.vercel.app/" // Removed the trailing slash
 ];
 
 
