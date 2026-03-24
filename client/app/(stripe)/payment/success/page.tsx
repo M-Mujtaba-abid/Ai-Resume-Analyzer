@@ -60,10 +60,10 @@ export default function SuccessPage() {
     {/* Action Buttons - Py-4 se height control ki */}
     <div className="space-y-3">
       <button
-        onClick={() => router.push("/dashboard")}
+        onClick={() => router.push("/subscription")}
         className="group w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(37,99,235,0.2)]"
       >
-        Go to Dashboard
+        Visit your subscription
         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
       </button>
       
