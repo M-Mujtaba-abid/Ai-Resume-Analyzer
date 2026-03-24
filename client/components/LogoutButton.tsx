@@ -28,7 +28,7 @@ export default function LogoutButton() {
     mutate();
   }}
       disabled={isPending}
-      className="bg-card text-foreground px-5 py-2.5 rounded-xl font-bold border border-border hover:bg-border transition-colors"
+      // className="bg-card text-foreground px-5 py-2.5 rounded-xl font-bold border border-border hover:bg-border transition-colors"
     >
       {isPending ? "Logging out..." : "Logout"}
     </button>

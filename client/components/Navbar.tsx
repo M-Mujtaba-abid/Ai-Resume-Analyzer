@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ModeToggle } from "./ModeToggle";
 import Link from "next/link";
-import { Menu, X } from "lucide-react"; // lucide-react icons use kar rahe hain
+import { Menu, X, User, CreditCard, Moon, Sun, LogOut, LogIn, UserPlus, ChevronRight } from "lucide-react";
+import { useTheme } from "next-themes";
 import LogoutButton from "./LogoutButton";
+import UserMenu from "./UserMenu";
 
 const Navbar = ({ isLoggedIn = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -15,13 +17,8 @@ const Navbar = ({ isLoggedIn = false }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Jab mobile menu khula ho to scroll lock kar dein
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
   }, [isMobileMenuOpen]);
 
   const navLinks = [
@@ -33,16 +30,16 @@ const Navbar = ({ isLoggedIn = false }) => {
   return (
     <>
       <nav
-        className={`fixed top-0 w-full z-100 transition-all duration-300 ${
+        className={`fixed top-0 w-full z-[100] transition-all duration-500 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-lg border-b border-border py-3"
+            ? "bg-background/80 backdrop-blur-xl border-b border-border py-3"
             : "bg-transparent py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
-          <Link href={"/"} className="flex items-center gap-2 group z-110">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <Link href={"/"} className="flex items-center gap-2 group z-[110]">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/20 group-hover:rotate-6 transition-transform">
               R
             </div>
             <span className="text-xl font-bold tracking-tight text-foreground italic">
@@ -51,130 +48,129 @@ const Navbar = ({ isLoggedIn = false }) => {
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex space-x-10 font-semibold text-foreground/70 text-sm uppercase tracking-wider">
+          <div className="hidden md:flex items-center space-x-8 font-medium text-foreground/70 text-sm">
             {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="hover:text-blue-600 transition-colors"
-              >
+              <Link key={link.name} href={link.href} className="hover:text-blue-600 transition-colors">
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 
-          {/* Actions & Hamburger */}
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-3">
-              <ModeToggle />
-              {isLoggedIn ? (
-                // <button className="">
-                <LogoutButton />
-              ) : (
-                <>
-                  <Link
-                    href={"/login"}
-                    className="text-foreground/80 font-bold px-4 py-2 hover:text-blue-600 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href={"/register"}
-                    className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
-                  >
-                    Register
-                  </Link>
-                </>
-              )}
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center">
+              <UserMenu isLoggedIn={isLoggedIn} />
             </div>
 
-            {/* Hamburger Button (Mobile Only) */}
+            {/* Hamburger Button */}
             <button
-              className="md:hidden p-2 text-foreground z-110"
+              className="md:hidden p-2.5 bg-secondary/50 rounded-xl text-foreground z-[110] border border-border"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
         {/* --- MOBILE MENU OVERLAY --- */}
         <div
-          className={`fixed inset-0 w-full h-dvh bg-background/98 backdrop-blur-2xl z-999 md:hidden transition-all duration-500 ease-in-out ${
-            isMobileMenuOpen
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-full opacity-0 pointer-events-none"
+          className={`fixed inset-0 w-full h-screen bg-background z-[105] md:hidden transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
+            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          {/* Inner Container: Isme scroll handle hoga */}
-          <div className="relative w-full h-full flex flex-col overflow-y-auto overflow-x-hidden">
-            {/* Close Button Area (Hamein hamesha top-right par close button chahiye hota hai) */}
-            <div className="flex justify-end p-6">
-              <button
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 text-foreground"
-              >
-                <X size={32} />
-              </button>
+          <div className="flex flex-col h-full pt-28 px-6 pb-8 overflow-y-auto overflow-x-hidden">
+            
+            {/* Nav Links Section */}
+            <div className="space-y-2 mb-10">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 px-4 mb-4">
+                Navigation
+              </p>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between w-full p-4 rounded-2xl bg-secondary/30 hover:bg-secondary border border-transparent hover:border-border transition-all active:scale-[0.98]"
+                >
+                  <span className="text-xl font-bold text-foreground">{link.name}</span>
+                  <ChevronRight size={18} className="text-muted-foreground" />
+                </Link>
+              ))}
             </div>
 
-            {/* Content Area */}
-            <div className="flex flex-col items-center justify-start grow px-6 pb-20 space-y-10 text-center">
-              {/* Branding inside Menu */}
-              <div className="flex flex-col items-center gap-2 mb-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-blue-500/20">
-                  R
-                </div>
-                <span className="text-xl font-bold tracking-tight text-foreground italic">
-                  ResuScan<span className="text-blue-600">.AI</span>
-                </span>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="flex flex-col space-y-8 w-full">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-4xl font-extrabold text-foreground hover:text-blue-600 transition-all active:scale-95 tracking-tighter"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </div>
-
-              {/* Divider */}
-              <div className="w-full max-w-62.5 border-t border-border pt-10">
-                <div className="flex flex-col items-center gap-8">
-                  <ModeToggle />
-
-                  {isLoggedIn ? (
-                    <LogoutButton />
-                  ) : (
-                    <div className="flex flex-col gap-5 w-full">
-                      <Link
-                        href={"/login"}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-2xl font-bold text-foreground/70 hover:text-foreground"
-                      >
-                        Sign In
-                      </Link>
-                      <Link
-                        href={"/register"}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="bg-blue-600 text-white py-5 rounded-2xl font-bold text-xl shadow-2xl shadow-blue-500/30 active:scale-95 transition-transform"
-                      >
-                        Get Started Free
-                      </Link>
+            {/* User Account Section */}
+            <div className="mt-auto border-t border-border pt-8">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 px-4 mb-6">
+                Account & Settings
+              </p>
+              
+              {isLoggedIn ? (
+                <div className="space-y-3">
+                  {/* Profile Card */}
+                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-600/5 border border-blue-600/10 mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20">
+                      MA
                     </div>
-                  )}
-                </div>
-              </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-foreground truncate">Mujtaba Abid</p>
+                      <p className="text-xs text-muted-foreground truncate">mujtaba.dev@example.com</p>
+                    </div>
+                  </div>
 
-              {/* Footer Text */}
-              <p className="text-sm text-slate-500 font-medium pt-4 pb-10">
-                Professional Resume Analysis v1.0
+                  <div className="grid grid-cols-1 gap-3">
+                    <MobileMenuLink href="/profile" icon={<User size={20} />} label="My Profile" onClick={() => setIsMobileMenuOpen(false)} />
+                    <MobileMenuLink href="/subscription" icon={<CreditCard size={20} />} label="Subscription" onClick={() => setIsMobileMenuOpen(false)} />
+                    
+                    <button
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      className="flex items-center justify-between w-full p-4 rounded-2xl bg-secondary/50 text-foreground font-semibold active:scale-[0.98] transition-transform"
+                    >
+                      <div className="flex items-center gap-4">
+                        {theme === "dark" ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-blue-500" />}
+                        <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                      </div>
+                      <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === 'dark' ? 'bg-blue-600' : 'bg-slate-300'}`}>
+                         <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${theme === 'dark' ? 'right-1' : 'left-1'}`} />
+                      </div>
+                    </button>
+
+                    <div className="flex items-center gap-4 w-full p-4 rounded-2xl bg-red-500/10 text-red-500 font-bold mt-4">
+                       <LogOut size={20} />
+                       <LogoutButton />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                   <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl border border-border font-bold text-lg active:scale-[0.98] transition-all hover:bg-secondary"
+                  >
+                    <LogIn size={20} /> Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-blue-600 text-white font-bold text-lg shadow-xl shadow-blue-500/20 active:scale-[0.98] transition-all"
+                  >
+                    <UserPlus size={20} /> Get Started Free
+                  </Link>
+                  
+                  <button
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    className="flex items-center justify-center gap-2 w-full py-2 text-muted-foreground font-medium text-sm"
+                  >
+                    {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+                    {theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="text-center mt-10">
+               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest opacity-50">
+                ResuScan.AI • Version 1.0.4
               </p>
             </div>
           </div>
@@ -183,5 +179,17 @@ const Navbar = ({ isLoggedIn = false }) => {
     </>
   );
 };
+
+const MobileMenuLink = ({ href, icon, label, onClick }: { href: string; icon: React.ReactNode; label: string; onClick: () => void }) => (
+  <Link
+    href={href}
+    onClick={onClick}
+    className="flex items-center gap-4 w-full p-4 rounded-2xl bg-secondary/50 hover:bg-secondary border border-transparent hover:border-border transition-all text-foreground font-semibold active:scale-[0.98]"
+  >
+    <span className="text-blue-600">{icon}</span>
+    <span className="flex-1">{label}</span>
+    <ChevronRight size={16} className="text-muted-foreground/40" />
+  </Link>
+);
 
 export default Navbar;
