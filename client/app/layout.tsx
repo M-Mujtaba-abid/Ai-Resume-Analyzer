@@ -6,6 +6,7 @@ import QueryProvider from "@/components/QueryProvider";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import { cookies } from "next/headers";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Toaster position="top-center" />
             <Navbar isLoggedIn={isLogedin} />
             {children}
+            <Footer/>
           </QueryProvider>
         </ThemeProvider>
       </body>
