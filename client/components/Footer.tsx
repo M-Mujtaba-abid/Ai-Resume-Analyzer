@@ -80,7 +80,7 @@ export default function Footer() {
         {/* Links Sections */}
         {footerLinks.map((section, i) => (
           <div key={i} className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-slate-900 dark:text-slate-100">
+            <h4 className="text-sm font-bold uppercase tracking-widest text-red-900 dark:text-slate-100">
               {section.title}
             </h4>
             <ul className="space-y-4">
