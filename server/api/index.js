@@ -1,11 +1,15 @@
 
 import dotenv from 'dotenv';
 dotenv.config();
+import connectDB from '../config/db';
+import initCronJobs from '../jobs/resetLimits';
+import configurePassport from '../config/passport';
+import app from '../app';
 
-import app from './app.js';
-import connectDB from './config/db.js';
-import configurePassport from './config/passport.js';
-import initCronJobs from './jobs/resetLimits.js';
+// import app from './app.js';
+// import connectDB from './config/db.js';
+// import configurePassport from './config/passport.js';
+// import initCronJobs from './jobs/resetLimits.js';
 
 let isInitialized = false;
 
