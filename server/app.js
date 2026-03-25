@@ -12,6 +12,8 @@ import { errorHandler } from './middleware/error.middleware.js';
 import { stripeWebhook } from './webhooks/stripe.webhook.js';
 
 const app = express();
+// Vercel runs behind a proxy; trust it so req.secure/protocol reflect HTTPS.
+app.set("trust proxy", true);
 
 const allowedOrigins = [
   "http://localhost:3000",

@@ -23,6 +23,25 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
+ const getCookieOptions = (req) => {
+  // Decide based on HTTPS because Vercel/Node may not always set NODE_ENV
+  // or req.secure the way we expect behind proxies.
+  const origin = req?.headers?.origin; // frontend origin (scheme included)
+  const isHttps =
+    req?.secure ||
+    req?.headers?.["x-forwarded-proto"] === "https" ||
+    origin?.startsWith("https://") ||
+    process.env.VERCEL === "1";
+
+  return {
+    httpOnly: true,
+    // Browsers require Secure when SameSite=None.
+    secure: isHttps,
+    sameSite: isHttps ? "none" : "lax",
+    path: "/", 
+  };
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   console.log("REQ BODY:", req.body); // 👈 debug
   const { name, email, password } = req.body;
@@ -107,14 +126,7 @@ const loginUser = asyncHandler(async (req, res) => {
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false }); // DB mein save karna lazmi hai
 
-  const isProd = process.env.NODE_ENV === "production";
-  const cookieOptions = {
-    httpOnly: true,
-    secure: isProd,
-    // Browsers require Secure when SameSite=None.
-    sameSite: isProd ? "none" : "lax",
-    path: "/",
-  };
+  const cookieOptions = getCookieOptions(req);
 
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken",
@@ -144,13 +156,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   // Same options jo login ke waqt use kiye thay wahi yahan use karein,
   // otherwise some browsers may not clear the cookie correctly.
-  const isProd = process.env.NODE_ENV === "production";
-  const options = {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    path: "/",
-  };
+  const options = getCookieOptions(req);
 
   return res
     .status(200)
@@ -164,13 +170,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   if (!incomingToken) throw new ApiError(401, "Unauthorized request");
 
   try {
-    const isProd = process.env.NODE_ENV === "production";
-    const cookieOptions = {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      path: "/",
-    };
+    const cookieOptions = getCookieOptions(req);
 
     const decoded = jwt.verify(incomingToken, process.env.REFRESH_TOKEN_SECRET);
     // console.log("decoded", decoded)
