@@ -8,7 +8,7 @@ import initCronJobs from './jobs/resetLimits.js';
 
 const PORT = process.env.PORT ;
 
-connectDB()
+await connectDB()
 initCronJobs();
 
 configurePassport(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);

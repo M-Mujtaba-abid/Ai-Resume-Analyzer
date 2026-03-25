@@ -24,6 +24,7 @@ const connectDB = async () => {
     try {
         const conn = await mongoose.connect(process.env.MONGO_URI);
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+        console.log("mongo uri ",process.env.MONGO_URI)
     } catch (error) {
         console.error(`❌ MongoDB Connection Error: ${error.message}`);
         // Deployed environment mein exit na karein, bas error throw karein

@@ -16,7 +16,6 @@ const initCronJobs = () => {
                 { plan: "free" }, 
                 { $set: { analysisCount: 0 } } 
             );
-
             console.log(`✅ Daily limits reset for ${result.modifiedCount} users.`);
             console.log("-----------------------");
         } catch (error) {
