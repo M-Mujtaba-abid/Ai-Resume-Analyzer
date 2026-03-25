@@ -42,7 +42,7 @@
       emailVerificationExpiry: otpExpiry,
     });
 
-     console.error("REGISTER ERROR:", error);
+    //  console.error("REGISTER ERROR:", error);
     return res
       .status(201)
       .json(
