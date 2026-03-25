@@ -108,11 +108,11 @@ const loginUser = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false }); // DB mein save karna lazmi hai
 
   const isProd = process.env.NODE_ENV === "production";
-
-  const options = {
+  const cookieOptions = {
     httpOnly: true,
-    secure: isProd, // production me true
-    sameSite: isProd ? "None" : "Lax",
+    secure: isProd,
+    // Browsers require Secure when SameSite=None.
+    sameSite: isProd ? "none" : "lax",
     path: "/",
   };
 
@@ -122,8 +122,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -142,11 +142,14 @@ const logoutUser = asyncHandler(async (req, res) => {
     );
   }
 
-  // Same options jo login ke waqt use kiye thay wahi yahan use karein
+  // Same options jo login ke waqt use kiye thay wahi yahan use karein,
+  // otherwise some browsers may not clear the cookie correctly.
+  const isProd = process.env.NODE_ENV === "production";
   const options = {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
   };
 
   return res
@@ -161,6 +164,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   if (!incomingToken) throw new ApiError(401, "Unauthorized request");
 
   try {
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
+    };
+
     const decoded = jwt.verify(incomingToken, process.env.REFRESH_TOKEN_SECRET);
     // console.log("decoded", decoded)
     const user = await User.findById(decoded?._id).select("+refreshToken");
@@ -176,8 +187,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     await user.save({ validateBeforeSave: false });
     return res
       .status(200)
-      .cookie("accessToken", accessToken, { httpOnly: true })
-      .cookie("refreshToken", newRefreshToken, { httpOnly: true })
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", newRefreshToken, cookieOptions)
       .json(new ApiResponse(200, { accessToken }, "Token refreshed"));
   } catch (error) {
     console.log("Actual Error:", error.message);
