@@ -9,7 +9,7 @@ import {
   // logoutUser,
   changecurrentpassword
 } from "@/types/authTypes";
-import { api, API_URL } from "./api";
+import { api, BACKEND_URL } from "./api";
 
 // const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -60,6 +60,7 @@ export const verifyOtp = async (data: VerifyOtpRequest): Promise<AuthResponse> =
 };
 
 export const loginWithGoogle = () => {
-  window.location.href = `${API_URL}/user/google`;
+  // Google OAuth redirects across domains, so send the user directly to backend.
+  window.location.href = `${BACKEND_URL}/user/google`;
 };
 
