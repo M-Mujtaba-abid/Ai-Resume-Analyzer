@@ -2,8 +2,16 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserProfile } from "@/services/userService";
-import { User, Mail, Zap, Calendar, BarChart3, ShieldCheck } from "lucide-react";
+import {
+  User,
+  Mail,
+  Zap,
+  Calendar,
+  BarChart3,
+  ShieldCheck,
+} from "lucide-react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 export default function ProfileItem() {
   const { data, isLoading, isError } = useQuery({
@@ -31,7 +39,10 @@ export default function ProfileItem() {
   const user = data.data;
 
   // Percentage for progress bar
-  const usagePercentage = Math.min((user.analysisCount / user.maxLimit) * 100, 100);
+  const usagePercentage = Math.min(
+    (user.analysisCount / user.maxLimit) * 100,
+    100,
+  );
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -39,14 +50,18 @@ export default function ProfileItem() {
       <div className="relative overflow-hidden bg-card border border-border rounded-[2.5rem] p-8 shadow-sm">
         {/* Background Decorative Blur */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 blur-[100px] rounded-full" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
           {/* Avatar Section */}
           <div className="relative group">
-            <div className="w-32 h-32 rounded-[2rem] overflow-hidden border-4 border-background shadow-2xl transition-transform duration-500 group-hover:scale-105">
-              <img 
-                src={user.avatar || "https://ui-avatars.com/api/?name=" + user.name} 
-                alt={user.name} 
+            <div className="w-32 h-32 rounded-4xl overflow-hidden border-4 border-background shadow-2xl transition-transform duration-500 group-hover:scale-105">
+              <Image
+                width={100}
+                height={100}
+                src={
+                  user.avatar || "https://ui-avatars.com/api/?name=" + user.name
+                }
+                alt={user.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -67,7 +82,7 @@ export default function ProfileItem() {
                 <ShieldCheck size={12} /> {user.role}
               </div>
             </div>
-            
+
             <div className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground mb-4">
               <Mail size={16} />
               <span className="text-sm font-medium">{user.email}</span>
@@ -84,17 +99,21 @@ export default function ProfileItem() {
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-6 rounded-3xl bg-secondary/30 border border-border">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Analysis Usage</span>
+              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                Analysis Usage
+              </span>
               <BarChart3 size={18} className="text-blue-500" />
             </div>
             <div className="flex items-end gap-2 mb-2">
               <span className="text-4xl font-black">{user.analysisCount}</span>
-              <span className="text-muted-foreground font-bold mb-1">/ {user.maxLimit}</span>
+              <span className="text-muted-foreground font-bold mb-1">
+                / {user.maxLimit}
+              </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full h-2.5 bg-border rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-blue-600 rounded-full transition-all duration-1000" 
+              <div
+                className="h-full bg-blue-600 rounded-full transition-all duration-1000"
                 style={{ width: `${usagePercentage}%` }}
               />
             </div>
@@ -105,18 +124,22 @@ export default function ProfileItem() {
 
           <div className="p-6 rounded-3xl bg-secondary/30 border border-border flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Plan Expiry</span>
+              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                Plan Expiry
+              </span>
               <Calendar size={18} className="text-blue-500" />
             </div>
             <div>
               <p className="text-xl font-bold mt-2">
-                {new Date(user.planExpiry).toLocaleDateString('en-US', { 
-                  month: 'long', 
-                  day: 'numeric', 
-                  year: 'numeric' 
+                {new Date(user.planExpiry).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
                 })}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Renews automatically</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Renews automatically
+              </p>
             </div>
           </div>
         </div>
@@ -126,7 +149,9 @@ export default function ProfileItem() {
       <div className="bg-card border border-border rounded-3xl p-4 overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-border/50">
           <span className="text-sm font-bold opacity-60">Member Since</span>
-          <span className="font-semibold">{new Date(user.createdAt).toLocaleDateString()}</span>
+          <span className="font-semibold">
+            {new Date(user.createdAt).toLocaleDateString()}
+          </span>
         </div>
         <div className="flex items-center justify-between p-4">
           <span className="text-sm font-bold opacity-60">Stripe ID</span>
