@@ -3,14 +3,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserProfile } from "@/services/userService";
 import {
-  User,
+  // User,
   Mail,
   Zap,
   Calendar,
   BarChart3,
   ShieldCheck,
 } from "lucide-react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import Image from "next/image";
 
 export default function ProfileItem() {
@@ -155,7 +155,7 @@ export default function ProfileItem() {
         </div>
         <div className="flex items-center justify-between p-4">
           <span className="text-sm font-bold opacity-60">Stripe ID</span>
-          <span className="font-mono text-xs bg-secondary px-2 py-1 rounded truncate max-w-[150px]">
+          <span className="font-mono text-xs bg-secondary px-2 py-1 rounded truncate max-w-37.5">
             {user.stripeCustomerId || "N/A"}
           </span>
         </div>
