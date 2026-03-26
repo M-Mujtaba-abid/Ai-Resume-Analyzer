@@ -18,17 +18,17 @@ export default function Footer() {
     {
       title: "Product",
       links: [
-        { name: "AI Scanner", href: "/scanner" },
+        { name: "AI Scanner", href: "/" },
         { name: "Pricing", href: "/pricing" },
-        { name: "ATS Guide", href: "/blog/ats-guide" },
+        { name: "ATS Guide", href: "/" },
       ],
     },
     {
       title: "Support",
       links: [
-        { name: "Help Center", href: "/help" },
-        { name: "Privacy Policy", href: "/privacy" },
-        { name: "Terms of Service", href: "/terms" },
+        { name: "Help Center", href: "/" },
+        { name: "Privacy Policy", href: "/" },
+        { name: "Terms of Service", href: "/" },
       ],
     },
   ];
@@ -80,7 +80,7 @@ export default function Footer() {
         {/* Links Sections */}
         {footerLinks.map((section, i) => (
           <div key={i} className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-red-900 dark:text-slate-100">
+            <h4 className="text-sm font-bold uppercase tracking-widest  text-blue-500!  dark:text-slate-100">
               {section.title}
             </h4>
             <ul className="space-y-4">

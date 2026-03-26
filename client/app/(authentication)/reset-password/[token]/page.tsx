@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
   const onSubmit = (data: ResetPasswordRequest) => mutate(data);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
+    <div className="h-[70vh] flex items-center justify-center bg-background transition-colors">
 
       <div className="bg-card p-8 rounded-xl shadow-md w-full max-w-md border border-border">
 

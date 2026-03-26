@@ -183,7 +183,7 @@ export default function Pricing() {
       plans.find((p) => p.id === currentActivePlan)?.rank || 0;
 
     if (planId === currentActivePlan) return "Plan Active";
-    if (planId === "free") return "Current Plan";
+    if (planId === "free") return "Free Plan";
     if (planRank < userPlanRank) return `Downgrade to ${planId}`;
     return `Upgrade to ${planId}`;
   };

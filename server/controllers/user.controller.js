@@ -23,7 +23,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
   }
 };
 
- const getCookieOptions = (req) => {
+const getCookieOptions = (req) => {
   // Decide based on HTTPS because Vercel/Node may not always set NODE_ENV
   // or req.secure the way we expect behind proxies.
   const origin = req?.headers?.origin; // frontend origin (scheme included)
@@ -38,7 +38,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     // Browsers require Secure when SameSite=None.
     secure: isHttps,
     sameSite: isHttps ? "none" : "lax",
-    path: "/", 
+    path: "/",
   };
 };
 
@@ -247,7 +247,36 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-  const message = `Aapka password reset link ye hai: \n\n ${resetUrl} \n\n Ye link 15 minute mein expire ho jayega.`;
+  const htmlMessage = `
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 600px; margin: auto; color: #1e293b;">
+    <h2 style="color: #0f172a; border-bottom: 2px solid #22c55e; padding-bottom: 10px;">Password Reset Request</h2>
+    
+    <p style="margin-top: 20px; font-size: 16px; line-height: 1.6;">
+      Hello,
+    </p>
+    
+    <p style="font-size: 16px; line-height: 1.6;">
+      We received a request to reset the password for your account. You can reset your password by clicking the button below:
+    </p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${resetUrl}" style="background-color: #22c55e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+        Reset Your Password
+      </a>
+    </div>
+    
+    <p style="font-size: 14px; color: #64748b; line-height: 1.6;">
+      <strong>Note:</strong> This link is valid for <strong>15 minutes</strong> only. If you did not request a password reset, please ignore this email or contact support if you have concerns.
+    </p>
+    
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+    
+    <p style="font-size: 14px; color: #94a3b8;">
+      Best Regards,<br>
+      <strong>The Support Team</strong>
+    </p>
+  </div>
+`;
 
   try {
     await sendEmail({
@@ -255,7 +284,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
       subject: "Password Reset Request",
 
-      message,
+      html: htmlMessage,
     });
 
     console.log("mail send to ", user.email);
@@ -266,7 +295,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           {},
-          "Email bhej di gayi hai. Apna inbox check karein.",
+          "Email Sent. Please check your gmail.",
         ),
       );
   } catch (error) {

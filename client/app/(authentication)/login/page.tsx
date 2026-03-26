@@ -8,6 +8,7 @@ import { LoginRequest, AuthResponse } from "@/types/authTypes";
 import { ApiError } from "@/types/apiTypes";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import Image from 'next/image';
 
 export default function LoginPage() {
 
@@ -36,7 +37,7 @@ export default function LoginPage() {
 
   const forgetgetHandler =()=>{
     router.push("/Forgot-Password")
-    alert("clicked on forget ")
+    // alert("clicked on forget ")
   }
 
   return (
@@ -120,11 +121,18 @@ export default function LoginPage() {
 
     {/* Google Login */}
     <button
-      onClick={loginWithGoogle}
-      className="w-full py-2 border rounded hover:bg-gray-50 transition"
-    >
-      Continue with Google
-    </button>
+              onClick={loginWithGoogle}
+              className="w-full flex items-center justify-center gap-3 border border-border bg-card text-foreground rounded-lg py-2.5 hover:bg-background transition"
+            >
+              <Image
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                className="w-5 h-5"
+                alt="google"
+                width={300}
+                height={100}
+              />
+              Continue with Google
+            </button>
 
     {/* Signup Link */}
     <p className="text-center text-sm mt-6 text-gray-500">
