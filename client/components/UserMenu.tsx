@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { User, CreditCard, Moon, Sun, LogOut, ChevronDown, LogIn, UserPlus, Loader2 } from "lucide-react";
+import { User, CreditCard, Moon, Sun, LogOut, ChevronDown, LogIn, UserPlus, Loader2, History, Lock } from "lucide-react";
 import { useTheme } from "next-themes";
 import LogoutButton from "./LogoutButton";
 import { useQuery } from "@tanstack/react-query";
@@ -75,9 +75,30 @@ const UserMenu = ({ isLoggedIn = false }: UserMenuProps) => {
               </div>
 
               <div className="px-2 space-y-1">
-                <MenuLink href="/profile" icon={<User size={16} />} label="My Profile" onClick={() => setIsOpen(false)} />
-                <MenuLink href="/subscription" icon={<CreditCard size={16} />} label="Subscription" onClick={() => setIsOpen(false)} />
-                <MenuLink href="/analysisHistory" icon={<CreditCard size={16} />} label="analysisHistory" onClick={() => setIsOpen(false)} />
+                <MenuLink
+                  href="/profile"
+                  icon={<User size={16} />}
+                  label="My Profile"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MenuLink
+                  href="/subscription"
+                  icon={<CreditCard size={16} />}
+                  label="Subscription"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MenuLink
+                  href="/analysisHistory"
+                  icon={<History size={16} />}
+                  label="Analysis History"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MenuLink
+                  href="/changeCurrentPassword"
+                  icon={<Lock size={16} />}
+                  label="Change Password"
+                  onClick={() => setIsOpen(false)}
+                />
               </div>
 
               <div className="border-t border-border mt-2 pt-2 px-2">

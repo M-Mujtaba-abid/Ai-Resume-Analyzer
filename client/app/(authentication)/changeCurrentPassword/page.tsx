@@ -53,7 +53,7 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background transition-colors">
+    <div className="h-[85vh] flex items-center justify-center bg-background transition-colors">
       <div className="w-full max-w-md bg-card p-8 rounded-xl shadow-md border border-border">
         
         <h2 className="text-2xl font-bold text-center mb-6 text-foreground">
