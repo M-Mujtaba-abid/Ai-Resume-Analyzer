@@ -21,6 +21,7 @@ const sendEmail = async (options) => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log(" mail sent to ... ", options.email);
 };
 
 export default sendEmail;

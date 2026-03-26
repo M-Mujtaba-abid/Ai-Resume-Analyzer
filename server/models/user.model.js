@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema(
 userSchema.post("save", async function (doc, next) {
   try {
     if (doc.emailVerificationOTP && !doc.isEmailVerified) {
-      sendEmail({
+    await sendEmail({
         email: doc.email,
         subject: "Verify Your Email - AI Resume Analyzer",
         html: `
