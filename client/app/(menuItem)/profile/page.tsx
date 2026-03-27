@@ -123,25 +123,31 @@ export default function ProfileItem() {
           </div>
 
           <div className="p-6 rounded-3xl bg-secondary/30 border border-border flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-                Plan Expiry
-              </span>
-              <Calendar size={18} className="text-blue-500" />
-            </div>
-            <div>
-              <p className="text-xl font-bold mt-2">
-                {new Date(user.planExpiry).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Renews automatically
-              </p>
-            </div>
-          </div>
+  <div className="flex items-center justify-between">
+    <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+      Plan Expiry
+    </span>
+    <Calendar size={18} className="text-blue-500" />
+  </div>
+  <div>
+    <p className="text-xl font-bold mt-2">
+      {user.plan === "free" ? (
+        "Life Time" // Agar free plan hai to "Lifetime" ya "No Expiry" dikhayen
+      ) : user.planExpiry ? (
+        new Date(user.planExpiry).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      ) : (
+        "N/A"
+      )}
+    </p>
+    <p className="text-xs text-muted-foreground mt-1">
+      {user.plan === "free" ? "Free Forever" : "Renews automatically"}
+    </p>
+  </div>
+</div>
         </div>
       </div>
 
