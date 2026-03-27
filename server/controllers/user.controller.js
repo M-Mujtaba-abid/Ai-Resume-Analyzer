@@ -345,13 +345,13 @@ const googleAuthCallback = asyncHandler(async (req, res) => {
   );
 
   // 2. Cookie options set karein
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    path: "/",
-  };
-
+  // const options = {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  //   path: "/",
+  // };
+  const options = getCookieOptions(req);
   // 3. Cookies set karke redirect karein
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
