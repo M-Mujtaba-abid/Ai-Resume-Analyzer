@@ -291,13 +291,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
     res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {},
-          "Email Sent. Please check your gmail.",
-        ),
-      );
+      .json(new ApiResponse(200, {}, "Email Sent. Please check your gmail."));
   } catch (error) {
     console.log("EMAIL ERROR DETAILS:", error);
 
