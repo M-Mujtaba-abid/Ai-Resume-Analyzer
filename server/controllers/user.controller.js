@@ -343,7 +343,7 @@ const googleAuthCallback = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     req.user._id,
   );
-
+  console.log("Callback hit with user:", req.user)
   // 2. Cookie options set karein
   // const options = {
   //   httpOnly: true,
