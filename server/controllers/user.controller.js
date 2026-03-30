@@ -24,21 +24,23 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const getCookieOptions = (req) => {
-  // Decide based on HTTPS because Vercel/Node may not always set NODE_ENV
-  // or req.secure the way we expect behind proxies.
-  const origin = req?.headers?.origin; // frontend origin (scheme included)
-  const isHttps =
-    req?.secure ||
-    req?.headers?.["x-forwarded-proto"] === "https" ||
-    origin?.startsWith("https://") ||
-    process.env.VERCEL === "1";
+  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+  
+  // Production mein humein pata hai ke HTTPS hi hoga
+  const isHttps = 
+    isProduction || 
+    req?.secure || 
+    req?.headers?.["x-forwarded-proto"] === "https";
 
   return {
     httpOnly: true,
-    // Browsers require Secure when SameSite=None.
-    secure: isHttps,
-    sameSite: isHttps ? "none" : "lax",
+    secure: isHttps, 
+    // AGAR frontend aur backend different domains par hain (e.g. vercel vs render)
+    // toh 'none' hona lazmi hai production mein.
+    sameSite: isHttps ? "none" : "lax", 
     path: "/",
+    // Token ki expiration bhi set karein taake cookie expire na ho jaye foran
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   };
 };
 
@@ -352,6 +354,7 @@ const googleAuthCallback = asyncHandler(async (req, res) => {
   //   path: "/",
   // };
   const options = getCookieOptions(req);
+  console.log("Cookie Options being set:", options);
   // 3. Cookies set karke redirect karein
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
